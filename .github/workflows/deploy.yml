@@ -1,0 +1,30 @@
+name: Deploy static content to GitHub Pages # 워크플로우의 이름. GitHub Actions 탭에서 표시되는 이름.
+
+on: # 언제 이 워크플로우를 실행할지 조건을 설정.
+  push:
+    branches: ["main"] # main branch에 push 할 때 실행.
+  workflow_dispatch: # 수동 실행 버튼도 추가 (GitHub Actions 화면에서 Run workflow 버튼으로 직접 실행 가능).
+
+permissions: # 워크플로우가 GitHub API에 접근할 수 있는 권한 설정.
+  contents: read
+  pages: write
+  id-token: write
+
+jobs: # 워크플로우에서 실행할 작업 단위(Job) 정의.
+  deploy: # deploy라는 job 이름.
+    runs-on: ubuntu-latest # GitHub가 제공하는 가상머신(ubuntu 최신 버전)에서 실행됨.
+    steps:
+      - name: Checkout # 리포 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Setup Pages # Pages 설정 준비 GitHub Pages로 배포하기 위한 런타임 설정을 잡아준다.
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact # 아티팩트 업로드
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "." # 배포할 대상물로 지정. 이 파일들이 GitHub Pages 서버에 올라감.
+
+      - name: Deploy to GitHub Pages # Pages에 배포
+        id: deployment
+        uses: actions/deploy-pages@v4
