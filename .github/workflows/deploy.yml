@@ -17,13 +17,25 @@ jobs: # 워크플로우에서 실행할 작업 단위(Job) 정의.
       - name: Checkout # 리포 체크아웃
         uses: actions/checkout@v4
 
-      - name: Setup Pages # Pages 설정 준비 GitHub Pages로 배포하기 위한 런타임 설정을 잡아준다.
+      - name: Setup Node.js # Vite 빌드를 위해 Node 설치
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies # 의존성 설치
+        run: npm ci
+
+      - name: Build with Vite # dist 생성
+        run: npm run build
+
+      - name: Setup Pages # Pages 설정 준비
         uses: actions/configure-pages@v4
 
-      - name: Upload artifact # 아티팩트 업로드
+      - name: Upload artifact # dist만 업로드
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "." # 배포할 대상물로 지정. 이 파일들이 GitHub Pages 서버에 올라감.
+          path: ./dist
 
       - name: Deploy to GitHub Pages # Pages에 배포
         id: deployment
